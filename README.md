@@ -1,16 +1,63 @@
-# resume_builder
+# Resume Builder (Flutter + Firebase)
 
-A new Flutter project.
+A Flutter app with Firebase-powered authentication and onboarding to collect profile/resume data.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Email/Password auth 
+- Multi-step onboarding flow
+- Firestore-backed profile storage + edits
 
-A few resources to get you started if this is your first Flutter project:
+## Prerequisites
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Flutter SDK installed (`flutter doctor` is clean)
+- A Firebase project (Authentication + Firestore enabled)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Optional (recommended): FlutterFire CLI for generating Firebase config
+
+```bash
+dart pub global activate flutterfire_cli
+```
+
+## Setup
+
+### 1) Install dependencies
+
+```bash
+flutter pub get
+```
+
+### 2) Generate Firebase configuration (required)
+
+This project expects `lib/firebase_options.dart` to exist locally.
+
+`lib/firebase_options.dart` is **ignored by git** to avoid committing credentials.
+
+Generate it via FlutterFire:
+
+```bash
+flutterfire configure
+```
+
+If you can’t use FlutterFire right now, use the committed template:
+
+- Copy `lib/firebase_options.example.dart` → `lib/firebase_options.dart`
+- Replace placeholders with your Firebase project values
+
+### 3) Run
+
+```bash
+flutter run
+```
+
+## Useful Docs
+
+- Quick setup walkthrough: `QUICK_START.md`
+- Full file map/reference: `QUICK_REFERENCE.md`
+- Project summary/notes: `SUMMARY.md`
+
+## Troubleshooting
+
+- Firebase init fails: re-run `flutterfire configure` and confirm `lib/firebase_options.dart` exists
+- Google Sign-In fails: verify OAuth settings and (Android) SHA-1 in Firebase Console
+- Firestore permission denied: check your Firestore rules
