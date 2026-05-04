@@ -20,55 +20,55 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'YOUR_WEB_API_KEY',
-    appId: 'YOUR_WEB_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
+    apiKey: 'AIzaSyAJ8stneJp-tq2SZ2Cf-DyB2FrlPPvHGxg',
+    appId: '1:594108323606:web:placeholder',
+    messagingSenderId: '594108323606',
+    projectId: 'fitness-74404',
+    authDomain: 'fitness-74404.firebaseapp.com',
+    storageBucket: 'fitness-74404.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'YOUR_ANDROID_API_KEY',
-    appId: 'YOUR_ANDROID_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    databaseURL: 'https://YOUR_PROJECT_ID.firebaseio.com',
+    apiKey: 'AIzaSyAJ8stneJp-tq2SZ2Cf-DyB2FrlPPvHGxg',
+    appId: '1:594108323606:android:2f343926227698c539a237',
+    messagingSenderId: '594108323606',
+    projectId: 'fitness-74404',
+    databaseURL: 'https://fitness-74404.firebaseio.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'YOUR_IOS_API_KEY',
-    appId: 'YOUR_IOS_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    databaseURL: 'https://YOUR_PROJECT_ID.firebaseio.com',
+    apiKey: 'AIzaSyCxNSqLkHypPFo5xyClv_AeIc3owo0V1a8',
+    appId: '1:594108323606:ios:731bd79eb9de6e2139a237',
+    messagingSenderId: '594108323606',
+    projectId: 'fitness-74404',
+    databaseURL: 'https://fitness-74404.firebaseio.com',
     iosBundleId: 'com.example.resumeBuilder',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'YOUR_MACOS_API_KEY',
-    appId: 'YOUR_MACOS_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    databaseURL: 'https://YOUR_PROJECT_ID.firebaseio.com',
+    apiKey: 'AIzaSyCxNSqLkHypPFo5xyClv_AeIc3owo0V1a8',
+    appId: '1:594108323606:ios:731bd79eb9de6e2139a237',
+    messagingSenderId: '594108323606',
+    projectId: 'fitness-74404',
+    databaseURL: 'https://fitness-74404.firebaseio.com',
     iosBundleId: 'com.example.resumeBuilder',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'YOUR_WINDOWS_API_KEY',
-    appId: 'YOUR_WINDOWS_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
+    apiKey: 'AIzaSyAJ8stneJp-tq2SZ2Cf-DyB2FrlPPvHGxg',
+    appId: '1:594108323606:web:placeholder',
+    messagingSenderId: '594108323606',
+    projectId: 'fitness-74404',
+    authDomain: 'fitness-74404.firebaseapp.com',
+    storageBucket: 'fitness-74404.firebasestorage.app',
   );
 
   static const FirebaseOptions linux = FirebaseOptions(
-    apiKey: 'YOUR_LINUX_API_KEY',
-    appId: 'YOUR_LINUX_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
+    apiKey: 'AIzaSyAJ8stneJp-tq2SZ2Cf-DyB2FrlPPvHGxg',
+    appId: '1:594108323606:web:placeholder',
+    messagingSenderId: '594108323606',
+    projectId: 'fitness-74404',
+    authDomain: 'fitness-74404.firebaseapp.com',
+    storageBucket: 'fitness-74404.firebasestorage.app',
   );
 }

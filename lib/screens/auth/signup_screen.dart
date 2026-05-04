@@ -68,6 +68,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         _firstNameController.text.trim(),
         _lastNameController.text.trim(),
       );
+
+      // Navigate to onboarding screen after signup
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/onboarding');
+      }
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();
@@ -99,9 +104,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(height: 12),
               Text(
                 'Sign up to get started',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
@@ -188,13 +193,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Create Account'),
+                child:
+                    _isLoading
+                        ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                        : const Text('Create Account'),
               ),
               const SizedBox(height: 24),
               Row(

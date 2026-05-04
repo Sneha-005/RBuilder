@@ -1,11 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/models.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Get current user
@@ -25,12 +23,13 @@ class AuthService {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      // Create user profile in Firestore
+      // Create user profile in Firestore with empty firstName/lastName
+      // User will fill these during onboarding
       await _createUserProfile(
         userCredential.user!.uid,
         email,
-        firstName,
-        lastName,
+        '', // Empty - will be filled in onboarding
+        '', // Empty - will be filled in onboarding
       );
 
       return userCredential;
@@ -42,62 +41,80 @@ class AuthService {
   // Email & Password Sign In
   Future<UserCredential> signInWithEmail(String email, String password) async {
     try {
-      return await _auth.signInWithEmailAndPassword(
+      final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      // Some auth flows/users may not have a matching Firestore profile yet.
+      // Ensure it exists before the UI starts listening to /users/{uid}.
+      await ensureUserProfileExists(user: userCredential.user);
+
+      return userCredential;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
   }
 
-  // Google Sign In
-  Future<UserCredential> signInWithGoogle() async {
+  /// Ensures a `/users/{uid}` profile document exists for the given user.
+  ///
+  /// This prevents the app from crashing/showing `User profile not found` when
+  /// the user is authenticated but their Firestore profile hasn't been created
+  /// (e.g., older accounts, manual auth creation, or changed auth flows).
+  Future<void> ensureUserProfileExists({User? user}) async {
+    final u = user ?? _auth.currentUser;
+    if (u == null) return;
+
+    final docRef = _firestore.collection('users').doc(u.uid);
+    final doc = await docRef.get();
+
+    if (doc.exists) {
+      // Don't overwrite user-entered fields; just ensure basic identifiers exist.
+      await docRef.set({
+        'uid': u.uid,
+        'email': u.email ?? '',
+      }, SetOptions(merge: true));
+      return;
+    }
+
+    await docRef.set({
+      'uid': u.uid,
+      'email': u.email ?? '',
+      'firstName': '',
+      'lastName': '',
+      'phoneNumber': '',
+      'bio': '',
+      'skills': <String>[],
+      'experiences': <Map<String, dynamic>>[],
+      'educations': <Map<String, dynamic>>[],
+      'interests': <String>[],
+      'createdAt': Timestamp.now(),
+      'updatedAt': Timestamp.now(),
+    });
+  }
+
+  // Check if onboarding is complete for current user
+  Future<bool> isOnboardingComplete() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        throw 'Google sign in cancelled';
-      }
+      final user = _auth.currentUser;
+      if (user == null) return false;
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      if (!doc.exists) return false;
 
-      UserCredential userCredential = await _auth.signInWithCredential(
-        credential,
-      );
+      final data = doc.data() as Map<String, dynamic>;
+      final firstName = data['firstName'] as String? ?? '';
+      final lastName = data['lastName'] as String? ?? '';
 
-      // Check if user already exists in Firestore
-      final docSnapshot =
-          await _firestore
-              .collection('users')
-              .doc(userCredential.user!.uid)
-              .get();
-
-      if (!docSnapshot.exists) {
-        // Create new user profile
-        final nameParts = googleUser.displayName?.split(' ') ?? ['', ''];
-        await _createUserProfile(
-          userCredential.user!.uid,
-          googleUser.email,
-          nameParts.isNotEmpty ? nameParts[0] : '',
-          nameParts.length > 1 ? nameParts[1] : '',
-        );
-      }
-
-      return userCredential;
+      return firstName.isNotEmpty && lastName.isNotEmpty;
     } catch (e) {
-      throw 'Google sign in failed: $e';
+      throw 'Failed to check onboarding status: $e';
     }
   }
 
   // Sign Out
   Future<void> signOut() async {
     try {
-      await _googleSignIn.signOut();
       await _auth.signOut();
     } catch (e) {
       throw 'Sign out failed: $e';

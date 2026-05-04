@@ -19,10 +19,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String? _errorMessage;
 
   // Step 1: Personal Details
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _bioController = TextEditingController();
+  late final _firstNameController = TextEditingController(text: 'John');
+  late final _lastNameController = TextEditingController(text: 'Doe');
+  late final _phoneController = TextEditingController(text: 'Not provided');
+  late final _bioController = TextEditingController(
+    text: 'Welcome to my profile',
+  );
 
   // Step 2: Skills
   final _skillController = TextEditingController();
@@ -70,13 +72,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _submitOnboarding() async {
-    if (_firstNameController.text.isEmpty || _lastNameController.text.isEmpty) {
-      setState(() {
-        _errorMessage = 'Please fill in required fields';
-      });
-      return;
-    }
-
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -84,6 +79,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     try {
       final uid = _auth.currentUser!.uid;
+
       await _firestoreService.updatePersonalDetails(
         uid,
         _firstNameController.text.trim(),
@@ -92,9 +88,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         _bioController.text.trim(),
       );
 
-      if (_skills.isNotEmpty) {
-        await _firestoreService.updateSkills(uid, _skills);
-      }
+      await _firestoreService.updateSkills(
+        uid,
+        _skills.isEmpty ? ['Communication'] : _skills,
+      );
 
       for (var experience in _experiences) {
         await _firestoreService.addExperience(uid, experience);
@@ -104,9 +101,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         await _firestoreService.addEducation(uid, education);
       }
 
-      if (_interests.isNotEmpty) {
-        await _firestoreService.updateInterests(uid, _interests);
-      }
+      await _firestoreService.updateInterests(
+        uid,
+        _interests.isEmpty ? ['Learning'] : _interests,
+      );
 
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/profile');
@@ -125,7 +123,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _addSkill() {
-    if (_skillController.text.isNotEmpty && !_skills.contains(_skillController.text.trim())) {
+    if (_skillController.text.isNotEmpty &&
+        !_skills.contains(_skillController.text.trim())) {
       setState(() {
         _skills.add(_skillController.text.trim());
         _skillController.clear();
@@ -218,9 +217,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _nextStep() {
@@ -244,10 +243,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Complete Your Profile'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Complete Your Profile'), elevation: 0),
       body: Column(
         children: [
           // Progress indicator
@@ -265,15 +261,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       height: 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: index <= _currentStep
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey[300],
+                        color:
+                            index <= _currentStep
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey[300],
                       ),
                       child: Center(
                         child: Text(
                           '${index + 1}',
                           style: TextStyle(
-                            color: index <= _currentStep ? Colors.white : Colors.black,
+                            color:
+                                index <= _currentStep
+                                    ? Colors.white
+                                    : Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -331,16 +331,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: const Text('Back'),
                 ),
                 ElevatedButton(
-                  onPressed: _isLoading
-                      ? null
-                      : (_currentStep == 4 ? _submitOnboarding : _nextStep),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(_currentStep == 4 ? 'Complete' : 'Next'),
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : (_currentStep == 4 ? _submitOnboarding : _nextStep),
+                  child:
+                      _isLoading
+                          ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : Text(_currentStep == 4 ? 'Complete' : 'Next'),
                 ),
               ],
             ),
@@ -418,10 +420,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Skills',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
+        Text('Skills', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 20),
         Row(
           children: [
@@ -430,15 +429,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _skillController,
                 decoration: InputDecoration(
                   labelText: 'Add a skill',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ),
             const SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: _addSkill,
-              child: const Text('Add'),
-            ),
+            ElevatedButton(onPressed: _addSkill, child: const Text('Add')),
           ],
         ),
         const SizedBox(height: 16),
@@ -505,7 +503,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _startDateController,
                 decoration: InputDecoration(
                   labelText: 'Start Date',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 readOnly: true,
                 onTap: () async {
@@ -530,7 +530,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _endDateController,
                 decoration: InputDecoration(
                   labelText: 'End Date',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 readOnly: true,
                 onTap: () async {
@@ -538,11 +540,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     context: context,
                     initialDate: DateTime.now(),
                     firstDate: DateTime(1990),
-                    lastDate: DateTime.now().add(const Duration(days: 365 * 50)),
+                    lastDate: DateTime.now().add(
+                      const Duration(days: 365 * 50),
+                    ),
                   );
                   if (date != null) {
                     setState(() {
-                      _endDateController.text = '${date.day}/${date.month}/${date.year}';
+                      _endDateController.text =
+                          '${date.day}/${date.month}/${date.year}';
                     });
                   }
                 },
@@ -593,11 +598,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       GestureDetector(
                         onTap: () => _removeExperience(e.key),
-                        child: const Icon(Icons.delete, size: 20, color: Colors.red),
+                        child: const Icon(
+                          Icons.delete,
+                          size: 20,
+                          color: Colors.red,
+                        ),
                       ),
                     ],
                   ),
-                  Text(e.value.company, style: TextStyle(color: Colors.grey[600])),
+                  Text(
+                    e.value.company,
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
                 ],
               ),
             ),
@@ -611,10 +623,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Education',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
+        Text('Education', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 20),
         TextField(
           controller: _schoolController,
@@ -647,7 +656,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _startYearController,
                 decoration: InputDecoration(
                   labelText: 'Start Year',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ),
@@ -657,7 +668,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _endYearController,
                 decoration: InputDecoration(
                   labelText: 'End Year',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ),
@@ -697,11 +710,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       GestureDetector(
                         onTap: () => _removeEducation(e.key),
-                        child: const Icon(Icons.delete, size: 20, color: Colors.red),
+                        child: const Icon(
+                          Icons.delete,
+                          size: 20,
+                          color: Colors.red,
+                        ),
                       ),
                     ],
                   ),
-                  Text(e.value.school, style: TextStyle(color: Colors.grey[600])),
+                  Text(
+                    e.value.school,
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
                 ],
               ),
             ),
@@ -727,15 +747,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _interestController,
                 decoration: InputDecoration(
                   labelText: 'Add an interest',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ),
             const SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: _addInterest,
-              child: const Text('Add'),
-            ),
+            ElevatedButton(onPressed: _addInterest, child: const Text('Add')),
           ],
         ),
         const SizedBox(height: 16),

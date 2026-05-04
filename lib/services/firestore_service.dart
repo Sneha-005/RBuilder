@@ -36,13 +36,13 @@ class FirestoreService {
     String bio,
   ) async {
     try {
-      await _firestore.collection('users').doc(uid).update({
+      await _firestore.collection('users').doc(uid).set({
         'firstName': firstName,
         'lastName': lastName,
         'phoneNumber': phoneNumber,
         'bio': bio,
         'updatedAt': Timestamp.now(),
-      });
+      }, SetOptions(merge: true));
     } catch (e) {
       throw 'Failed to update personal details: $e';
     }
@@ -51,10 +51,10 @@ class FirestoreService {
   // Update skills
   Future<void> updateSkills(String uid, List<String> skills) async {
     try {
-      await _firestore.collection('users').doc(uid).update({
+      await _firestore.collection('users').doc(uid).set({
         'skills': skills,
         'updatedAt': Timestamp.now(),
-      });
+      }, SetOptions(merge: true));
     } catch (e) {
       throw 'Failed to update skills: $e';
     }
@@ -81,10 +81,10 @@ class FirestoreService {
         experiences.add(experience.toMap());
       }
 
-      await _firestore.collection('users').doc(uid).update({
+      await _firestore.collection('users').doc(uid).set({
         'experiences': experiences,
         'updatedAt': Timestamp.now(),
-      });
+      }, SetOptions(merge: true));
     } catch (e) {
       throw 'Failed to add experience: $e';
     }
@@ -102,10 +102,10 @@ class FirestoreService {
           experiences.removeAt(index);
         }
 
-        await _firestore.collection('users').doc(uid).update({
+        await _firestore.collection('users').doc(uid).set({
           'experiences': experiences,
           'updatedAt': Timestamp.now(),
-        });
+        }, SetOptions(merge: true));
       }
     } catch (e) {
       throw 'Failed to delete experience: $e';
@@ -133,10 +133,10 @@ class FirestoreService {
         educations.add(education.toMap());
       }
 
-      await _firestore.collection('users').doc(uid).update({
+      await _firestore.collection('users').doc(uid).set({
         'educations': educations,
         'updatedAt': Timestamp.now(),
-      });
+      }, SetOptions(merge: true));
     } catch (e) {
       throw 'Failed to add education: $e';
     }
@@ -154,10 +154,10 @@ class FirestoreService {
           educations.removeAt(index);
         }
 
-        await _firestore.collection('users').doc(uid).update({
+        await _firestore.collection('users').doc(uid).set({
           'educations': educations,
           'updatedAt': Timestamp.now(),
-        });
+        }, SetOptions(merge: true));
       }
     } catch (e) {
       throw 'Failed to delete education: $e';
@@ -167,10 +167,10 @@ class FirestoreService {
   // Update interests
   Future<void> updateInterests(String uid, List<String> interests) async {
     try {
-      await _firestore.collection('users').doc(uid).update({
+      await _firestore.collection('users').doc(uid).set({
         'interests': interests,
         'updatedAt': Timestamp.now(),
-      });
+      }, SetOptions(merge: true));
     } catch (e) {
       throw 'Failed to update interests: $e';
     }
