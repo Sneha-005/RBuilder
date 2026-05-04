@@ -1,25 +1,38 @@
 # Resume Builder (Flutter + Firebase)
 
-A Flutter app with Firebase-powered authentication and onboarding to collect profile/resume data.
+Resume Builder is a Flutter app that collects resume/profile data through an onboarding flow and stores it in Firebase (Auth + Firestore). After onboarding, users can view and edit their profile.
 
-## Features
+## What’s included
 
-- Email/Password auth 
-- Multi-step onboarding flow
-- Firestore-backed profile storage + edits
+- Email/password authentication (Firebase Auth)
+- Multi-step onboarding form for profile details
+- Firestore-backed profile storage with real-time updates
+- Profile view + edit screens
 
-## Prerequisites
+## Tech stack
 
-- Flutter SDK installed (`flutter doctor` is clean)
-- A Firebase project (Authentication + Firestore enabled)
+- Flutter (Dart)
+- Firebase Auth (`firebase_auth`)
+- Cloud Firestore (`cloud_firestore`)
+- Firebase Core (`firebase_core`)
 
-Optional (recommended): FlutterFire CLI for generating Firebase config
+## Key files
 
-```bash
-dart pub global activate flutterfire_cli
-```
+- `lib/main.dart` — app entry + Firebase initialization + routing
+- `lib/screens/auth/*` — login/signup UI
+- `lib/screens/onboarding/onboarding_screen.dart` — onboarding flow
+- `lib/screens/profile/*` — profile view + edit
+- `lib/services/*` — Firebase Auth + Firestore helpers
+- `lib/models/models.dart` — Firestore data models
 
-## Setup
+## Getting started
+
+### Prerequisites
+
+- Flutter SDK installed (make sure `flutter doctor` is clean)
+- A Firebase project with:
+	- Authentication: Email/Password enabled
+	- Firestore Database enabled
 
 ### 1) Install dependencies
 
@@ -27,37 +40,34 @@ dart pub global activate flutterfire_cli
 flutter pub get
 ```
 
-### 2) Generate Firebase configuration (required)
+### 2) Create Firebase config (required)
 
 This project expects `lib/firebase_options.dart` to exist locally.
 
-`lib/firebase_options.dart` is **ignored by git** to avoid committing credentials.
+To avoid committing credentials, `lib/firebase_options.dart` is **ignored by git**.
 
-Generate it via FlutterFire:
+Recommended (generate via FlutterFire CLI):
 
 ```bash
+dart pub global activate flutterfire_cli
 flutterfire configure
 ```
 
 If you can’t use FlutterFire right now, use the committed template:
 
 - Copy `lib/firebase_options.example.dart` → `lib/firebase_options.dart`
-- Replace placeholders with your Firebase project values
+- Replace the placeholders with your Firebase project values
 
-### 3) Run
+### 3) Run the app
 
 ```bash
 flutter run
 ```
 
-## Useful Docs
+### 4) Run tests (optional)
 
-- Quick setup walkthrough: `QUICK_START.md`
-- Full file map/reference: `QUICK_REFERENCE.md`
-- Project summary/notes: `SUMMARY.md`
+```bash
+flutter test
+```
 
-## Troubleshooting
 
-- Firebase init fails: re-run `flutterfire configure` and confirm `lib/firebase_options.dart` exists
-- Google Sign-In fails: verify OAuth settings and (Android) SHA-1 in Firebase Console
-- Firestore permission denied: check your Firestore rules
